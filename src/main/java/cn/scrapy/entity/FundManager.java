@@ -25,12 +25,12 @@ public class FundManager implements AfterExtractor , Serializable{
     /**
      * 姓名
      */
-    @ExtractBy("//*[@id='app']/div[2]/div[2]/div/div/div/div/div[1]/div[1]/div[1]/div[2]/h2/text()")
+    @ExtractBy("//*[@id='app']/div[4]/div[2]/div/div/div/div/div[1]/div[1]/div[1]/div[2]/h2/text()")
     private String name;
     /**
      * 从业时间
      */
-    @ExtractBy("//*[@id='app']/div[2]/div[2]/div/div/div/div/div[1]/div[1]/div[2]/div[2]/div/text()")
+    @ExtractBy("//*[@id='app']/div[4]/div[2]/div/div/div/div/div[1]/div[1]/div[2]/div[2]/div/text()")
     private String workingTime;
 
     @Override

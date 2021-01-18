@@ -2,6 +2,7 @@ package cn.scrapy.entity;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.Arrays;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 
@@ -19,7 +20,7 @@ import us.codecraft.webmagic.model.annotation.ExtractBy.Source;
 @Data
 @TableName
 @TargetUrl("https://qieman.com/funds/manager/\\d+")
-@ExtractBy(value = "//*[@id='app']/div[2]/div[2]/div/div/div/div/div[3]/div/div/div/div/div/div/div/table/tbody/tr", multi = true)
+@ExtractBy(value = "//*[@id='app']/div[4]/div[2]/div/div/div/div/div[3]/div/div/div/div/div/div/div/table/tbody/tr", multi = true)
 public class Experience implements AfterExtractor, Serializable {
     private static final long serialVersionUID = 1L;
     /**
@@ -40,31 +41,37 @@ public class Experience implements AfterExtractor, Serializable {
      */
     private LocalDate startTime;
     /**
-     * 任期回报
-     */
-    private Double tenureReturn;
-    /**
-     * 同期大盘
-     */
-    private Double tenureMarket;
-    /**
      * 同期排名
      */
     private String rank;
     /**
-     * 任期评价
+     * 任期回报
      */
-    private String appraise;
+    @ExtractBy("//*span[1]/text()")
+    private Double tenureReturn;
+    /**
+     * 同期大盘
+     */
+    @ExtractBy("//*span[2]/text()")
+    private Double tenureMarket;
 
     @Override
     public void afterProcess(Page page) {
-        //华商恒益稳健混合 2020-02-20 / 至今   1630/3156
-        System.out.println(name);
-        // 筛选掉已不再被该经历监管的基金
-        // 录入开始时间
+        var info = name.trim().replaceAll(" +", " ").split(" ");
+        if (info.length < 5 || !info[3].equals("至今")){
+            page.setSkip(true);
+            return;
+        }
+        name = info[0];
+        startTime = LocalDate.parse(info[1]);
+        rank = info[4];
     }
 
     public static void main(String[] args) {
+        // String str = " 华商恒益稳健混合 2020-02-20 / 至今 1630/3156";
+        // var info = str.trim().replaceAll(" +", " ").split(" ");
+        // System.out.println(Arrays.toString(info));
+        // System.out.println(Arrays.toString(info.split(" ")));
         OOSpider.create(Site.me()).addPageModel(new ConsolePageModelPipeline(), Experience.class)
                 .setDownloader(new SeleniumDownloader()).addUrl("https://qieman.com/funds/manager/388").thread(1).run();
     }
