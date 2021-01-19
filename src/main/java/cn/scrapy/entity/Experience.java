@@ -2,20 +2,15 @@ package cn.scrapy.entity;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.Arrays;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 
-import cn.scrapy.scrapy.SeleniumDownloader;
 import lombok.Data;
 import us.codecraft.webmagic.Page;
-import us.codecraft.webmagic.Site;
+
 import us.codecraft.webmagic.model.AfterExtractor;
-import us.codecraft.webmagic.model.ConsolePageModelPipeline;
-import us.codecraft.webmagic.model.OOSpider;
 import us.codecraft.webmagic.model.annotation.ExtractBy;
 import us.codecraft.webmagic.model.annotation.TargetUrl;
-import us.codecraft.webmagic.model.annotation.ExtractBy.Source;
 
 @Data
 @TableName
@@ -58,21 +53,12 @@ public class Experience implements AfterExtractor, Serializable {
     @Override
     public void afterProcess(Page page) {
         var info = name.trim().replaceAll(" +", " ").split(" ");
-        if (info.length < 5 || !info[3].equals("至今")){
+        if (info.length < 5 || !info[3].equals("至今")) {
             page.setSkip(true);
             return;
         }
         name = info[0];
         startTime = LocalDate.parse(info[1]);
         rank = info[4];
-    }
-
-    public static void main(String[] args) {
-        // String str = " 华商恒益稳健混合 2020-02-20 / 至今 1630/3156";
-        // var info = str.trim().replaceAll(" +", " ").split(" ");
-        // System.out.println(Arrays.toString(info));
-        // System.out.println(Arrays.toString(info.split(" ")));
-        OOSpider.create(Site.me()).addPageModel(new ConsolePageModelPipeline(), Experience.class)
-                .setDownloader(new SeleniumDownloader()).addUrl("https://qieman.com/funds/manager/388").thread(1).run();
     }
 }
