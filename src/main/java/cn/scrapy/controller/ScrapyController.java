@@ -11,8 +11,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import cn.scrapy.api.R;
+import cn.scrapy.entity.Experience;
 import cn.scrapy.entity.Fund;
 import cn.scrapy.entity.FundManager;
+import cn.scrapy.pipeline.ExperiencePipeline;
 import cn.scrapy.pipeline.FundManagerPipeline;
 import cn.scrapy.pipeline.FundPipeline;
 import cn.scrapy.scrapy.SeleniumDownloader;
@@ -28,6 +30,8 @@ public class ScrapyController {
     private FundPipeline fundPipeline;
     @Autowired
     private FundManagerPipeline fundManagerPipeline;
+    @Autowired
+    private ExperiencePipeline experiencePipeline;
 
     @GetMapping
     public R<Void> scrapy() throws IOException {
@@ -35,6 +39,7 @@ public class ScrapyController {
         OOSpider.create(site)
                         .addPageModel(fundPipeline, Fund.class)
                         .addPageModel(fundManagerPipeline, FundManager.class)
+                        .addPageModel(experiencePipeline, Experience.class)
                         .setDownloader(new SeleniumDownloader())
                         .addUrl(getUrls())
                         .thread(5)

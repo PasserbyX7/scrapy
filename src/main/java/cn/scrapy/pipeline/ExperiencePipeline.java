@@ -18,6 +18,8 @@ public class ExperiencePipeline implements PageModelPipeline<Experience> {
 
     @Override
     public void process(Experience experience, Task task) {
+        if (!experience.getEnabled())
+            return;
         log.info("save Experience：{}", experience.toString());
         experienceService.saveOrUpdate(experience);
     }

@@ -1,5 +1,7 @@
 package cn.scrapy;
 
+import java.time.LocalDate;
+
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 
 import org.junit.jupiter.api.Test;
@@ -13,9 +15,13 @@ import cn.scrapy.pipeline.ExperiencePipeline;
 import cn.scrapy.pipeline.FundManagerPipeline;
 import cn.scrapy.pipeline.FundPipeline;
 import cn.scrapy.scrapy.SeleniumDownloader;
+import cn.scrapy.service.ExperienceService;
+import cn.scrapy.service.FundManagerService;
 import cn.scrapy.service.FundService;
 import us.codecraft.webmagic.Site;
+import us.codecraft.webmagic.model.ConsolePageModelPipeline;
 import us.codecraft.webmagic.model.OOSpider;
+import us.codecraft.webmagic.pipeline.ConsolePipeline;
 
 @SpringBootTest
 class ScrapyApplicationTests {
@@ -23,38 +29,42 @@ class ScrapyApplicationTests {
     @Autowired
     private FundService fundService;
     @Autowired
+    private FundManagerService fundManagerService;
+    @Autowired
     private FundPipeline fundPipeline;
     @Autowired
     private FundManagerPipeline fundManagerPipeline;
     @Autowired
     private ExperiencePipeline experiencePipeline;
+    @Autowired
+    private ExperienceService experienceService;
 
     @Test
     void contextLoads() {
-        OOSpider.create(Site.me())
+        OOSpider.create(site)
                         .addPageModel(experiencePipeline, Experience.class)
                         .setDownloader(new SeleniumDownloader())
-                        .addUrl("https://qieman.com/funds/manager/388")
-                        .thread(1)
+                        .addUrl(getUrls())
+                        .thread(5)
                         .run();
-        // String url = "https://qieman.com/funds/000136";
-        // String url = "https://qieman.com/funds/manager/865";
-        // @formatter:off
-        // OOSpider.create(site)
-        //         .addPageModel(fundPipeline, Fund.class)
-        //         .addPageModel(fundManagerPipeline, FundManager.class)
-        //         .setDownloader(new SeleniumDownloader())
-        //         .addUrl(url)
-        //         .addUrl(getUrls())
-        //         .thread(1)
-        //         .run();
-        // @formatter:on
     }
 
     private String[] getUrls() {
-        return null;
-        // var funds = fundService.list(Wrappers.<Fund>lambdaQuery().isNull(Fund::getCreateTime));
-        // return funds.stream().map(e -> e.getId().toString()).toArray(String[]::new);
+        var funds = fundManagerService.list();
+        return funds.stream().map(e -> "https://qieman.com/funds/manager/"+e.getId().toString()).toArray(String[]::new);
     }
+
+    @Test
+void test(){
+    var e=new Experience();
+    e.setId(null);
+    e.setFundManagerId(388L);
+    e.setName("test");
+    e.setStartTime(LocalDate.parse("2020-02-20"));
+    e.setRanking("1649/3145");
+    e.setTenureReturn(34.69);
+    e.setEnabled(true);
+    experienceService.save(e);
+}
 
 }

@@ -3,6 +3,8 @@ package cn.scrapy.entity;
 import java.io.Serializable;
 import java.time.LocalDate;
 
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
 import lombok.Data;
@@ -21,6 +23,7 @@ public class Experience implements AfterExtractor, Serializable {
     /**
      * 主键
      */
+    @TableId
     private Long id;
     /**
      * 基金经理id
@@ -38,7 +41,7 @@ public class Experience implements AfterExtractor, Serializable {
     /**
      * 同期排名
      */
-    private String rank;
+    private String ranking;
     /**
      * 任期回报
      */
@@ -49,16 +52,23 @@ public class Experience implements AfterExtractor, Serializable {
      */
     @ExtractBy("//*span[2]/text()")
     private Double tenureMarket;
+    /**
+     * 是否启用
+     */
+    @TableField(exist = false)
+    private Boolean enabled;
 
     @Override
     public void afterProcess(Page page) {
         var info = name.trim().replaceAll(" +", " ").split(" ");
         if (info.length < 5 || !info[3].equals("至今")) {
-            page.setSkip(true);
+            enabled = false;
             return;
         }
+        fundManagerId = Long.parseLong(page.getRequest().getUrl().substring(33));
         name = info[0];
         startTime = LocalDate.parse(info[1]);
-        rank = info[4];
+        ranking = info[4];
+        enabled = true;
     }
 }
