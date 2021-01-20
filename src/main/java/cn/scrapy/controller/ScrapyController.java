@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,11 +59,11 @@ public class ScrapyController {
     }
 
     private String[] getUrls() throws IOException {
-        Path path = Paths.get("C:\\Users\\75663\\Desktop\\fund.txt");
+        Path path = Paths.get("C:\\Users\\75663\\Desktop\\funds.txt");
         // @formatter:off
         return Files.readAllLines(path)
                             .stream()
-                            .filter(line -> !line.startsWith("(01-15)"))
+                            .filter(line -> !line.endsWith("加自选"))
                             .map(str -> str.substring(str.indexOf("(") + 1, str.indexOf("(") + 7))
                             .map(e -> "https://qieman.com/funds/" + e)
                             .toArray(String[]::new);

@@ -42,9 +42,12 @@ class ScrapyApplicationTests {
     @Test
     void contextLoads() {
         OOSpider.create(site)
+                        .addPageModel(fundPipeline, Fund.class)
+                        .addPageModel(fundManagerPipeline, FundManager.class)
                         .addPageModel(experiencePipeline, Experience.class)
                         .setDownloader(new SeleniumDownloader())
-                        .addUrl(getUrls())
+                        // .addUrl(getUrls())
+                        .addUrl("https://qieman.com/funds/110022")
                         .thread(5)
                         .run();
     }
@@ -54,18 +57,5 @@ class ScrapyApplicationTests {
         return null;
         // return funds.stream().map(e -> "https://qieman.com/funds/manager/"+e.getId().toString()).toArray(String[]::new);
     }
-
-    @Test
-void test(){
-    var e=new Experience();
-    e.setId(null);
-    e.setFundManagerId(388L);
-    e.setName("test");
-    e.setStartTime(LocalDate.parse("2020-02-20"));
-    e.setRanking("1649/3145");
-    e.setTenureReturn(34.69);
-    e.setEnabled(true);
-    experienceService.save(e);
-}
 
 }

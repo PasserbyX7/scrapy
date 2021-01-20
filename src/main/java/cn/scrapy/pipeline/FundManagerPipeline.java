@@ -19,7 +19,7 @@ public class FundManagerPipeline implements PageModelPipeline<FundManager> {
     @Override
     public void process(FundManager fundManager, Task task) {
         log.info("save fundManager：{}", fundManager.toString());
-        fundManagerService.saveOrUpdate(fundManager);
+        fundManagerService.save(fundManager);
     }
 
 }

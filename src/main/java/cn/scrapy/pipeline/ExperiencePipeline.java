@@ -21,7 +21,7 @@ public class ExperiencePipeline implements PageModelPipeline<Experience> {
         if (!experience.getEnabled())
             return;
         log.info("save Experience：{}", experience.toString());
-        experienceService.saveOrUpdate(experience);
+        experienceService.save(experience);
     }
 
 }

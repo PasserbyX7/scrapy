@@ -3,6 +3,7 @@ package cn.scrapy.entity;
 import java.io.Serializable;
 import java.time.LocalDate;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -23,7 +24,7 @@ public class Experience implements AfterExtractor, Serializable {
     /**
      * 主键
      */
-    @TableId
+    @TableId(type = IdType.AUTO)
     private Long id;
     /**
      * 基金经理id

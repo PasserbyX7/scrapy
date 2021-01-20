@@ -8,8 +8,5 @@ spring:
     url: jdbc:mysql:///fund?serverTimezone=UTC&useUnicode=true&characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true
     driver-class-name: com.mysql.cj.jdbc.Driver
 mybatis-plus:
-  global-config:
-    db-config:
-      id-type: auto
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
