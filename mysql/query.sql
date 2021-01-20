@@ -19,14 +19,15 @@ FROM
     GROUP BY
       e.fund_manager_id
   ) temp ON temp.id = m.id
-  AND e.name COLLATE utf8mb4_0900_ai_ci = f.name
+  AND e.name = f.name
 WHERE
-  f.drawdown <= 30
-  AND datediff(now(), f.create_time) >= 3 * 365
-  AND datediff(now(), e.start_time) >= 3 * 365
-  AND SUBSTR(m.working_time, 1, INSTR(m.working_time, '年') -1) + 0 >= 4
-  AND temp.cnt <= 6
+  f.drawdown <= 30 -- 最大回撤
+	AND f.sharpe_ratio>1.3 -- 夏普率
+  AND datediff(now(), f.create_time) >= 3 * 365 -- 基金运行时间
+	AND datediff(now(), e.start_time) >= 3 * 365 -- 经理在该基金操盘时长
+	AND SUBSTR(m.working_time, 1, INSTR(m.working_time, '年') -1) + 0 >= 4 -- 经理从业时间
+	AND temp.cnt <= 10 -- 经理所管基金数
 ORDER BY
+	f.sharpe_ratio DESC,
   f.drawdown ASC,
-  f.volatility DESC,
-  f.sharpe_ratio ASC
+  f.volatility DESC
