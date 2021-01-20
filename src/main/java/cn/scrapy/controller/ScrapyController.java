@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import cn.scrapy.api.R;
+import cn.scrapy.dto.FundDTO;
 import cn.scrapy.entity.Experience;
 import cn.scrapy.entity.Fund;
 import cn.scrapy.entity.FundManager;
@@ -18,6 +20,7 @@ import cn.scrapy.pipeline.ExperiencePipeline;
 import cn.scrapy.pipeline.FundManagerPipeline;
 import cn.scrapy.pipeline.FundPipeline;
 import cn.scrapy.scrapy.SeleniumDownloader;
+import cn.scrapy.service.FundService;
 import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.model.OOSpider;
 
@@ -32,8 +35,10 @@ public class ScrapyController {
     private FundManagerPipeline fundManagerPipeline;
     @Autowired
     private ExperiencePipeline experiencePipeline;
+    @Autowired
+    private FundService fundService;
 
-    @GetMapping
+    @GetMapping("/start")
     public R<Void> scrapy() throws IOException {
         // @formatter:off
         OOSpider.create(site)
@@ -46,6 +51,10 @@ public class ScrapyController {
                         .runAsync();
         // @formatter:on
         return R.ok();
+    }
+    @GetMapping("/list")
+    public R<List<FundDTO>>list(){
+        return R.ok(fundService.listFundDTO());
     }
 
     private String[] getUrls() throws IOException {

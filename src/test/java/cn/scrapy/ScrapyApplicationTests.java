@@ -51,7 +51,8 @@ class ScrapyApplicationTests {
 
     private String[] getUrls() {
         var funds = fundManagerService.list();
-        return funds.stream().map(e -> "https://qieman.com/funds/manager/"+e.getId().toString()).toArray(String[]::new);
+        return null;
+        // return funds.stream().map(e -> "https://qieman.com/funds/manager/"+e.getId().toString()).toArray(String[]::new);
     }
 
     @Test
