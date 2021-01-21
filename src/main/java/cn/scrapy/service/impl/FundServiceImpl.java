@@ -53,6 +53,6 @@ public class FundServiceImpl extends ServiceImpl<FundDao, Fund> implements FundS
 
     @Override
     public String[] getFundStockRelationUrls() {
-        return list().stream().map(e -> "http://fund.eastmoney.com/" + e.getId() + ".html").toArray(String[]::new);
+        return list().stream().map(e -> String.format("http://fund.eastmoney.com/%06d.html",e.getId())).toArray(String[]::new);
     }
 }

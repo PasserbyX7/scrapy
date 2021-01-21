@@ -5,8 +5,9 @@ spring:
   datasource:
     username: root
     password: cao981127
-    url: jdbc:mysql://192.168.153.128:3306/fund?serverTimezone=UTC&useUnicode=true&characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true
+    # 192.168.153.128:3306
+    url: jdbc:mysql:///fund?serverTimezone=UTC&useUnicode=true&characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true
     driver-class-name: com.mysql.cj.jdbc.Driver
-# mybatis-plus:
-#   configuration:
-#     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

@@ -67,6 +67,7 @@ public class ScrapyController {
                         .thread(5)
                         .runAsync();
         // @formatter:on
+        stockService.init();
         return R.ok();
     }
 

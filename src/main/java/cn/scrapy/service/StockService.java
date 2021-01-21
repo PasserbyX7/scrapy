@@ -12,4 +12,5 @@ public interface StockService extends IService<Stock> {
     Stock getByName(String name);
     String[] getStockUrls();
 	List<StockDTO> listByFundId(Long id);
+	void init();
 }

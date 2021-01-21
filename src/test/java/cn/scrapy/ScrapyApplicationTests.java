@@ -2,6 +2,7 @@ package cn.scrapy;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.Arrays;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -79,28 +80,27 @@ class ScrapyApplicationTests {
     }
 
     @Test
-    void fundTest() {
-        // INSERT INTO fund ( id ) VALUES ( ? )
-        // INSERT INTO stock ( id, name, pe, pb ) VALUES ( ?, ?, ?, ? )
-        var f = new Fund();
-        f.setId(999999L);
-        fundService.save(f);
-    }
-
-    @Test
     void stockTest() {
+        // stockService.saveStocks();
         OOSpider.create(site)
                         .addPageModel(stockPipeline, Stock.class)
                         .addUrl(stockService.getStockUrls())
-                        .thread(20)
+                        .thread(10)
                         .run();
     }
     @Test
     void fundStockRelationTest(){
-        OOSpider.create(site)
-                        .addPageModel(fundStockRelationPipeline, FundStockRelation.class)
-                        .addUrl("http://fund.eastmoney.com/161725.html")
-                        .thread(1)
-                        .run();
+        var f=new FundStockRelation();
+        f.setId(1L);
+        f.setFundId(1L);
+        f.setPercent(1.1);
+        f.setStockId("stockId");
+        f.setStockName("stockName");
+        fundStockRelationService.save(f);
+        // OOSpider.create(site)
+        //                 .addPageModel(fundStockRelationPipeline, FundStockRelation.class)
+        //                 .addUrl(fundService.getFundStockRelationUrls())
+        //                 .thread(5)
+        //                 .run();
     }
 }

@@ -26,7 +26,7 @@ public class FundStockRelationPipeline implements PageModelPipeline<FundStockRel
             return;
         fundStockRelation.setStockId(stockService.getByName(fundStockRelation.getStockName()).getId());
         log.info("save FundStockRelation：{}", fundStockRelation.toString());
-        // fundStockRelationService.save(fundStockRelation);
+        fundStockRelationService.save(fundStockRelation);
     }
 
 }

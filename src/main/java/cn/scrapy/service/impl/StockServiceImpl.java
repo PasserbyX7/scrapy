@@ -86,4 +86,10 @@ public class StockServiceImpl extends ServiceImpl<StockDao, Stock> implements St
                                         .collect(Collectors.toList());
         // @formatter:on
     }
+
+    @Override
+    public void init() {
+        remove(Wrappers.<Stock>lambdaQuery().isNull(Stock::getName).isNull(Stock::getPe).isNull(Stock::getPb));
+        baseMapper.distinct();
+    }
 }
