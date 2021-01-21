@@ -9,4 +9,6 @@ public class FundDTO {
     private Double drawdown;
     private Double volatility;
     private Double sharpeRatio;
+    private Double Pb;
+    private Double Pe;
 }

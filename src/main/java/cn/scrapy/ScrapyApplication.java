@@ -12,5 +12,4 @@ public class ScrapyApplication {
 		SpringApplication.run(ScrapyApplication.class, args);
 	}
 
-
 }

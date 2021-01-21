@@ -7,6 +7,13 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,11 +24,16 @@ import cn.scrapy.dto.FundDTO;
 import cn.scrapy.entity.Experience;
 import cn.scrapy.entity.Fund;
 import cn.scrapy.entity.FundManager;
+import cn.scrapy.entity.FundStockRelation;
+import cn.scrapy.entity.Stock;
 import cn.scrapy.pipeline.ExperiencePipeline;
 import cn.scrapy.pipeline.FundManagerPipeline;
 import cn.scrapy.pipeline.FundPipeline;
+import cn.scrapy.pipeline.FundStockRelationPipeline;
+import cn.scrapy.pipeline.StockPipeline;
 import cn.scrapy.scrapy.SeleniumDownloader;
 import cn.scrapy.service.FundService;
+import cn.scrapy.service.StockService;
 import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.model.OOSpider;
 
@@ -30,6 +42,7 @@ import us.codecraft.webmagic.model.OOSpider;
 public class ScrapyController {
 
     private Site site = Site.me().setTimeOut(3000).setRetryTimes(3).setSleepTime(1000);
+
     @Autowired
     private FundPipeline fundPipeline;
     @Autowired
@@ -37,7 +50,25 @@ public class ScrapyController {
     @Autowired
     private ExperiencePipeline experiencePipeline;
     @Autowired
+    private FundStockRelationPipeline fundStockRelationPipeline;
+    @Autowired
+    private StockPipeline stockPipeline;
+    @Autowired
     private FundService fundService;
+    @Autowired
+    private StockService stockService;
+
+    @GetMapping("/init")
+    public R<Void> init() {
+        // @formatter:off
+        OOSpider.create(site)
+                        .addPageModel(stockPipeline, Stock.class)
+                        .addUrl(stockService.getStockUrls())
+                        .thread(5)
+                        .runAsync();
+        // @formatter:on
+        return R.ok();
+    }
 
     @GetMapping("/start")
     public R<Void> scrapy() throws IOException {
@@ -47,26 +78,23 @@ public class ScrapyController {
                         .addPageModel(fundManagerPipeline, FundManager.class)
                         .addPageModel(experiencePipeline, Experience.class)
                         .setDownloader(new SeleniumDownloader())
-                        .addUrl(getUrls())
+                        .addUrl(fundService.getFundUrls())
                         .thread(5)
-                        .runAsync();
+                        .run();
+        OOSpider.create(site)
+                        .addPageModel(fundStockRelationPipeline, FundStockRelation.class)
+                        .addUrl(fundService.getFundStockRelationUrls())
+                        .thread(5)
+                        .run();
         // @formatter:on
         return R.ok();
     }
+
+    // TODO 参数化构建
     @GetMapping("/list")
-    public R<List<FundDTO>>list(){
-        return R.ok(fundService.listFundDTO());
+    public R<List<FundDTO>> list() {
+        var result = fundService.listFundDTO();
+        return R.ok(result).setMsg("total：" + result.size());
     }
 
-    private String[] getUrls() throws IOException {
-        Path path = Paths.get("C:\\Users\\75663\\Desktop\\funds.txt");
-        // @formatter:off
-        return Files.readAllLines(path)
-                            .stream()
-                            .filter(line -> !line.endsWith("加自选"))
-                            .map(str -> str.substring(str.indexOf("(") + 1, str.indexOf("(") + 7))
-                            .map(e -> "https://qieman.com/funds/" + e)
-                            .toArray(String[]::new);
-        // @formatter:on
-    }
 }
