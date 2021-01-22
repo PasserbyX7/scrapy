@@ -24,16 +24,18 @@ public class FundServiceImpl extends ServiceImpl<FundDao, Fund> implements FundS
     private StockService stockService;
 
     @Override
-    public List<FundDTO> listFundDTO() {
-        var fundDTOs = baseMapper.listFundDTO();
+    public List<FundDTO> listFundDTO(double drawdown, int fundTime, int fundCnt, int managerTradingTime,
+            int managerWorkingTime) {
+        var fundDTOs = baseMapper.listFundDTO(drawdown, fundTime, fundCnt, managerTradingTime, managerWorkingTime);
         fundDTOs.forEach(fund -> {
             double pb = 0, pe = 0;
-            for (var stockDTO : stockService.listByFundId(fund.getId())) {
-                pb += stockDTO.getPb() * stockDTO.getPercent();
-                pe += stockDTO.getPe() * stockDTO.getPercent();
-            }
+            for (var stockDTO : stockService.listByFundId(fund.getId())) 
+                if(stockDTO.getPercent()!=null){
+                    pb += stockDTO.getPb() * stockDTO.getPercent();
+                    pe += stockDTO.getPe() * stockDTO.getPercent();
+                }
             fund.setPb(pb / 100);
-            fund.setPb(pe / 100);
+            fund.setPe(pe / 100);
         });
         return fundDTOs;
     }
@@ -53,6 +55,7 @@ public class FundServiceImpl extends ServiceImpl<FundDao, Fund> implements FundS
 
     @Override
     public String[] getFundStockRelationUrls() {
-        return list().stream().map(e -> String.format("http://fund.eastmoney.com/%06d.html",e.getId())).toArray(String[]::new);
+        return list().stream().map(e -> String.format("http://fund.eastmoney.com/%06d.html", e.getId()))
+                .toArray(String[]::new);
     }
 }

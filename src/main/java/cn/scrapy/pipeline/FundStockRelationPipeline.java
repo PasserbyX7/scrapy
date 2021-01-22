@@ -24,7 +24,10 @@ public class FundStockRelationPipeline implements PageModelPipeline<FundStockRel
     public void process(FundStockRelation fundStockRelation, Task task) {
         if (fundStockRelation.getStockName() == null)
             return;
-        fundStockRelation.setStockId(stockService.getByName(fundStockRelation.getStockName()).getId());
+        var stock = stockService.getByName(fundStockRelation.getStockName());
+        if (stock == null)
+            return;
+        fundStockRelation.setStockId(stock.getId());
         log.info("save FundStockRelation：{}", fundStockRelation.toString());
         fundStockRelationService.save(fundStockRelation);
     }

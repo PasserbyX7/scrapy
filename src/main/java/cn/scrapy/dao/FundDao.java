@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 import cn.scrapy.dto.FundDTO;
@@ -35,15 +36,17 @@ public interface FundDao extends BaseMapper<Fund> {
         ) temp ON temp.id = m.id
         AND e.name = f.name
     WHERE
-        f.drawdown <= 30
-        AND datediff(now(), f.create_time) >= 3 * 365
-        AND datediff(now(), e.start_time) >= 3 * 365
-        AND SUBSTR(m.working_time, 1, INSTR(m.working_time, '年') -1) + 0 >= 4
-        AND temp.cnt <= 6
+        f.drawdown <= #{drawdown}
+        AND datediff(now(), f.create_time) >= #{fundTime} * 365
+        AND datediff(now(), e.start_time) >= #{managerTradingTime} * 365
+        AND SUBSTR(m.working_time, 1, INSTR(m.working_time, '年') -1) + 0 >= #{managerWorkingTime}
+        AND temp.cnt <= #{fundCnt}
     ORDER BY
         f.drawdown ASC,
         f.volatility DESC,
         f.sharpe_ratio ASC
     """)
-	List<FundDTO> listFundDTO();
+    List<FundDTO> listFundDTO(double drawdown,int fundTime,int fundCnt,int managerTradingTime,int managerWorkingTime);
+    
+// Established
 }

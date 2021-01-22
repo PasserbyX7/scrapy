@@ -2,6 +2,7 @@ package cn.scrapy.entity;
 
 import java.io.Serializable;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
@@ -21,7 +22,7 @@ public class FundStockRelation implements AfterExtractor, Serializable {
     /**
      * 主键
      */
-    @TableId
+    @TableId(type = IdType.AUTO)
     private Long id;
     /**
      * 基金id
@@ -44,6 +45,6 @@ public class FundStockRelation implements AfterExtractor, Serializable {
 
     @Override
     public void afterProcess(Page page) {
-        fundId = Long.parseLong(page.getRequest().getUrl().substring(26,32));
+        fundId = Long.parseLong(page.getRequest().getUrl().substring(26, 32));
     }
 }

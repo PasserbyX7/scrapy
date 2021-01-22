@@ -93,8 +93,9 @@ public class ScrapyController {
 
     // TODO 参数化构建
     @GetMapping("/list")
-    public R<List<FundDTO>> list() {
-        var result = fundService.listFundDTO();
+    public R<List<FundDTO>> list(double drawdown, int fundTime, int fundCnt, int managerTradingTime,
+            int managerWorkingTime) {
+        var result = fundService.listFundDTO(drawdown, fundTime, fundCnt, managerTradingTime, managerWorkingTime);
         return R.ok(result).setMsg("total：" + result.size());
     }
 

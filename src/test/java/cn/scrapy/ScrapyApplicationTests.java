@@ -90,17 +90,10 @@ class ScrapyApplicationTests {
     }
     @Test
     void fundStockRelationTest(){
-        var f=new FundStockRelation();
-        f.setId(1L);
-        f.setFundId(1L);
-        f.setPercent(1.1);
-        f.setStockId("stockId");
-        f.setStockName("stockName");
-        fundStockRelationService.save(f);
-        // OOSpider.create(site)
-        //                 .addPageModel(fundStockRelationPipeline, FundStockRelation.class)
-        //                 .addUrl(fundService.getFundStockRelationUrls())
-        //                 .thread(5)
-        //                 .run();
+        OOSpider.create(site)
+                        .addPageModel(fundStockRelationPipeline, FundStockRelation.class)
+                        .addUrl(fundService.getFundStockRelationUrls())
+                        .thread(5)
+                        .run();
     }
 }
